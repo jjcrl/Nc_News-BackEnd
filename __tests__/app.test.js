@@ -32,7 +32,7 @@ describe("ENDPOINT TESTING", () => {
         .get("/api/badpath")
         .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("Invalid path");
+          expect(response.body.msg).toBe("Page Not Found, Invalid path");
         });
     });
   });
@@ -88,5 +88,43 @@ describe("ENDPOINT TESTING", () => {
           });
         });
     });
+  });
+  describe("/api/articles/:article_id", () => {
+    test("200: Should reposnd with an article object that has author which is the username from the users table, title, article_id, body, topic, created_at, votes, properties.", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              body:expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+    });
+
+    test("404: Should respond with 404 when article id does not exisit", () => {
+      return request(app)
+        .get("/api/articles/100")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("No article found for article_id 100");
+        });
+    });
+    test("400: Should respond with 400 when passed invalid query type", () => {
+      return request(app)
+        .get("/api/articles/twelve")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Invalid input");
+        });
+    });
+
   });
 });
