@@ -6,7 +6,8 @@ exports.fetchTopics = async () => {
 };
 
 exports.fetchArticles = async () => {
-
-  const articles = await db.query("SELECT * FROM articles ORDER BY created_at desc;");
+  const articles = await db.query(
+    "SELECT * FROM articles ORDER BY created_at desc;"
+  );
   return articles.rows;
 };
