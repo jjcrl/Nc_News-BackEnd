@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 
-app.get("/api", (req, res) => {
-    res.status(200).send({ msg: "all ok" });
-  });
+const { getAllTopics } = require("./controllers/topics.controllers");
+const { handle404 } = require("./error_handling/app.errors");
 
-  
-  module.exports = app
+app.get("/api/topics", getAllTopics);
+
+app.all("*",handle404)
+
+module.exports = app;
