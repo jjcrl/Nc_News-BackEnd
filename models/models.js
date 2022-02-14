@@ -11,3 +11,8 @@ exports.fetchArticles = async () => {
   );
   return articles.rows;
 };
+
+exports.fetchUsers = async () => {
+  const users = await db.query("SELECT * FROM users;");
+  return users.rows;
+};
