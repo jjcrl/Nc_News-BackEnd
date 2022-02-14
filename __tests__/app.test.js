@@ -71,4 +71,22 @@ describe("ENDPOINT TESTING", () => {
         });
     });
   });
+  describe("/api/users", () => {
+    test("200: Should respond with an array of user objects each with the a username property", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((response) => {
+          expect(Array.isArray(response.body.users)).toBe(true);
+          expect(response.body.users.length).toBe(4);
+          response.body.users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
 });
