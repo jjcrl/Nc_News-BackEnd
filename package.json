@@ -8,7 +8,8 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "dev": "nodemon listen.js"
+    "dev": "nodemon listen.js",
+    "peep": "psql -f peep.sql > peep.txt"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,8 @@
     "jest-extended": "^2.0.0",
     "nodemon": "^2.0.15",
     "pg-format": "^1.0.4",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.2",
+    "jest-sorted": "^1.0.14"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
@@ -36,7 +38,7 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "jest-extended/all"
+      "jest-extended/all","jest-sorted"
     ]
   }
 }

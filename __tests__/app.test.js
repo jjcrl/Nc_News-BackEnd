@@ -36,4 +36,39 @@ describe("ENDPOINT TESTING", () => {
         });
     });
   });
+  describe("/api/articles", () => {
+    test("200: Should respond with an array of article objects , each with the properties title,article_id,topic,created_at,votes and author  which is the username from the users table", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          expect(Array.isArray(response.body.articles)).toBe(true);
+          expect(response.body.articles.length).toBe(12);
+
+          response.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    test("Should default to sorted by date descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.articles).toBeSorted({
+            key: "created_at",
+            descending: true,
+          });
+        });
+    });
+  });
 });
