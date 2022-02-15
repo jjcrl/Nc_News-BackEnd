@@ -1,5 +1,3 @@
 \c nc_news_test
 
-SELECT * FROM articles;
-
-SELECT * FROM users;
+ SELECT * FROM articles WHERE topic = 'mitch' ORDER BY created_at desc;

@@ -16,7 +16,7 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  fetchArticles()
+  fetchArticles(req.query)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -24,6 +24,7 @@ exports.getAllArticles = (req, res, next) => {
       next(err);
     });
 };
+
 
 exports.getAllUsers = (req, res, next) => {
   fetchUsers()
