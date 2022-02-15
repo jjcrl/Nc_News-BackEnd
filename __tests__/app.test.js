@@ -1,4 +1,3 @@
-const req = require("express/lib/request");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -32,7 +31,7 @@ describe("ENDPOINT TESTING", () => {
         .get("/api/badpath")
         .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("Invalid path");
+          expect(response.body.msg).toBe("Page Not Found, Invalid path");
         });
     });
   });
@@ -44,7 +43,6 @@ describe("ENDPOINT TESTING", () => {
         .then((response) => {
           expect(Array.isArray(response.body.articles)).toBe(true);
           expect(response.body.articles.length).toBe(12);
-
           response.body.articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -89,4 +87,41 @@ describe("ENDPOINT TESTING", () => {
         });
     });
   });
+  describe("/api/articles/:article_id", () => {
+    test("200: Should reposnd with an article object that has author which is the username from the users table, title, article_id, body, topic, created_at, votes, properties.", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual(
+            expect.objectContaining({
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              title: "Living in the shadow of a great man",
+              article_id: 1,
+              topic: "mitch",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+            })
+          );
+        });
+    });
+    test("404: Should respond with 404 when article id does not exisit", () => {
+      return request(app)
+        .get("/api/articles/100")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("No article found for article_id 100");
+        });
+    });
+    test("400: Should respond with 400 when passed invalid query", () => {
+      return request(app)
+        .get("/api/articles/twelve")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Invalid input");
+        });
+    });
+  });
+
 });
