@@ -181,12 +181,20 @@ describe("ENDPOINT TESTING", () => {
             });
           });
       });
-      test("400: Should respond with 400 error when given ivalid sort_by option", () => {
+      test("404: Should respond with 404 error when sort_by does not exist", () => {
         return request(app)
-          .get("/api/articles?sort_by=age")
+          .get("/api/articles?sort_by=iDontExist")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Cannot sort by iDontExist");
+          });
+      });
+      test("400: Should respond with 400 error when query is invalid", () => {
+        return request(app)
+          .get("/api/articles?sort=created_at")
           .expect(400)
           .then((response) => {
-            expect(response.body.msg).toBe("Cannot sort by age");
+            expect(response.body.msg).toBe("Invalid Input");
           });
       });
     });
@@ -208,7 +216,7 @@ describe("ENDPOINT TESTING", () => {
           .expect(200)
           .then((response) => {
             expect(response.body.articles).toBeSorted({
-              key:"votes",
+              key: "votes",
               descending: true,
             });
           });
@@ -223,7 +231,7 @@ describe("ENDPOINT TESTING", () => {
       });
     });
     describe("topic=", () => {
-      test("200: Should allow for querying of specific topics", () => {
+      test("200: Should respong with array of articles for the given topic", () => {
         return request(app)
           .get("/api/articles?topic=cats")
           .expect(200)
@@ -240,14 +248,21 @@ describe("ENDPOINT TESTING", () => {
             });
           });
       });
-
-      test("200: Should return an empty array when there are no articles for given topic", () => {
+      test("200: Should return an empty array when topic exists, but there are no articles associated", () => {
         return request(app)
-          .get("/api/articles?topic=dogs")
+          .get("/api/articles?topic=paper")
           .expect(200)
           .then((response) => {
             expect(response.body.articles.length).toBe(0);
             expect(response.body.articles).toEqual([]);
+          });
+      });
+      test("404: Should return 404 error when topic does not exists ", () => {
+        return request(app)
+          .get("/api/articles?topic=iDontExist")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Resource not found");
           });
       });
     });

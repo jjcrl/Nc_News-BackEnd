@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("./utils");
 
 exports.fetchTopics = async () => {
   const topics = await db.query("SELECT * FROM topics;");
@@ -6,7 +7,16 @@ exports.fetchTopics = async () => {
 };
 
 exports.fetchArticles = async (query) => {
-  let { sort_by,order,topic } = query;
+  const validQueries = ["sort_by", "order", "topic"];
+
+  let { sort_by, order, topic } = query;
+
+  const [key] = Object.keys(query);
+
+  
+  if (key && !validQueries.includes(key)) {
+    return Promise.reject({ status: 400, msg: `Invalid Input` });
+  }
 
   if (!sort_by) {
     sort_by = "created_at";
@@ -14,11 +24,10 @@ exports.fetchArticles = async (query) => {
   if (!order) {
     order = "desc";
   }
-
   const validSorts = ["votes", "created_at", "topic", "title", "author"];
 
   if (!validSorts.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: `Cannot sort by ${sort_by}` });
+    return Promise.reject({ status: 404, msg: `Cannot sort by ${sort_by}` });
   }
 
   let queryString = `SELECT * FROM articles `;
@@ -27,8 +36,12 @@ exports.fetchArticles = async (query) => {
   }
   queryString += `ORDER BY ${sort_by} ${order};`;
 
-  const articles = await db.query(queryString);
-  return articles.rows;
+  const articlesResult = await db.query(queryString);
+
+  if (articlesResult.rows.length === 0) {
+    await checkExists("topics", "slug", topic);
+  }
+  return articlesResult.rows;
 };
 
 exports.fetchUsers = async () => {
