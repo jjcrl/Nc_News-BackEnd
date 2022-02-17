@@ -31,7 +31,7 @@ describe("ENDPOINT TESTING", () => {
         .get("/api/badpath")
         .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("Page Not Found, Invalid path");
+          expect(response.body.msg).toBe("Page Not Found");
         });
     });
   });
@@ -119,7 +119,7 @@ describe("ENDPOINT TESTING", () => {
         .get("/api/articles/twelve")
         .expect(400)
         .then((response) => {
-          expect(response.body.msg).toBe("Invalid input");
+          expect(response.body.msg).toBe("Invalid Input");
         });
     });
   });
@@ -226,7 +226,7 @@ describe("ENDPOINT TESTING", () => {
           .get("/api/articles?sort_by=votes&order=most")
           .expect(400)
           .then((response) => {
-            expect(response.body.msg).toBe("Invalid input");
+            expect(response.body.msg).toBe("Invalid Input");
           });
       });
     });
@@ -262,9 +262,55 @@ describe("ENDPOINT TESTING", () => {
           .get("/api/articles?topic=iDontExist")
           .expect(404)
           .then((response) => {
-            expect(response.body.msg).toBe("Resource not found");
+            expect(response.body.msg).toBe("Page Not Found");
           });
       });
+    });
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    test("200: Should respond with an array of comments for the given article_id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          expect(Array.isArray(response.body.comments)).toBe(true);
+          expect(response.body.comments.length).toBe(11);
+          response.body.comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: Should respond with an empty array should a valid article_id have no comments associated", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.comments).toEqual([]);
+        });
+    });
+    test("404: Should respond with 404 error when given article_id that does not yet exsist", () => {
+      return request(app)
+        .get("/api/articles/100/comments")
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Page Not Found");
+        });
+    });
+    test("400: Should respond with 400 error when given article_id is invalid", () => {
+      return request(app)
+        .get("/api/articles/one/comments")
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Invalid Input");
+        });
     });
   });
 });

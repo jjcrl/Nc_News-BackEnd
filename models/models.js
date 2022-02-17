@@ -13,7 +13,6 @@ exports.fetchArticles = async (query) => {
 
   const [key] = Object.keys(query);
 
-  
   if (key && !validQueries.includes(key)) {
     return Promise.reject({ status: 400, msg: `Invalid Input` });
   }
@@ -51,8 +50,20 @@ exports.fetchUsers = async () => {
 
 exports.fetchArticleById = async (article_id) => {
   const article = await db.query(
-    `SELECT * FROM articles WHERE article_id = $1`,
+    `SELECT * FROM articles WHERE article_id = $1;`,
     [article_id]
   );
   return article.rows;
+};
+
+exports.fetchCommentsById = async (article_id) => {
+  const comments = await db.query(
+    `SELECT comments.author, comments.body, comments.comment_id,comments.created_at, comments.votes
+    FROM comments 
+    INNER JOIN articles 
+    ON articles.article_id = comments.article_id
+    WHERE comments.article_id = $1 ;`,
+    [article_id]
+  );
+  return comments.rows;
 };

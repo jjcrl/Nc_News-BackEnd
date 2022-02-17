@@ -5,7 +5,8 @@ const {
   getAllTopics,
   getAllArticles,
   getAllUsers,
-  getArticleById
+  getArticleById,
+  getCommentsById
 } = require("./controllers/controllers");
 
 const { handle404, handleCustomError, handlePsqlError } = require("./error_handling/app.errors");
@@ -15,6 +16,8 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id",getArticleById)
+
+app.get("/api/articles/:article_id/comments",getCommentsById)
 
 app.get("/api/users", getAllUsers);
 
