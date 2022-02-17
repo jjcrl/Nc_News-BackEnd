@@ -9,7 +9,7 @@ const {
   getCommentsById
 } = require("./controllers/controllers");
 
-const { handle404, handleCustomError, handlePsqlError } = require("./error_handling/app.errors");
+const { handle404, handleCustomError, handlePsqlError, handle500 } = require("./error_handling/app.errors");
 
 app.get("/api/topics", getAllTopics);
 
@@ -26,5 +26,7 @@ app.all("*", handle404);
 app.use(handleCustomError)
 
 app.use(handlePsqlError)
+
+app.use(handle500)
 
 module.exports = app;
