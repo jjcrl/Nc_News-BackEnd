@@ -16,7 +16,15 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  fetchArticles()
+
+  // let queries = Oject.keys(req.query)
+  // const validQuries = ['sort_by','order','topic']
+
+  // if(validQuries.includes(queries[0])){
+  //   console.log(queries[0])
+  // }
+
+  fetchArticles(req.query)
     .then((articles) => {
       res.status(200).send({ articles });
     })

@@ -9,7 +9,7 @@ exports.handleCustomError = (err, req, res, next) => {
 };
 
 exports.handlePsqlError = (err, req, res, next) => {
-  if (err.code === "22P02") {
+  if (err.code === "22P02" || err.code === '42601') {
     res.status(400).send({ msg: "Invalid input" });
   } else next(err);
 };

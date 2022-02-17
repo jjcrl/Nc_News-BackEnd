@@ -57,7 +57,7 @@ describe("ENDPOINT TESTING", () => {
           });
         });
     });
-    test("Should default to sorted by date descending order", () => {
+    test("200: Should default to sorted by date descending order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -124,4 +124,147 @@ describe("ENDPOINT TESTING", () => {
     });
   });
 
+  describe("/api/articles?...", () => {
+    describe("sort_by=...", () => {
+      test("200: date : Should sort by date of creation descending, this should be the defualt sorting.", () => {
+        return request(app)
+          .get("/api/articles?sort_by=created_at")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "created_at",
+              descending: true,
+            });
+          });
+      });
+      test("200: votes : Should sort by the number of votes descending", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "votes",
+              descending: true,
+            });
+          });
+      });
+      test("200: title : Should sort by the title of the article", () => {
+        return request(app)
+          .get("/api/articles?sort_by=title")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "title",
+              descending: true,
+            });
+          });
+      });
+      test("200: author : Should sort by the autor of the article", () => {
+        return request(app)
+          .get("/api/articles?sort_by=author")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "author",
+              descending: true,
+            });
+          });
+      });
+      test("200: topic : Should sort by the topic of the topic of the article", () => {
+        return request(app)
+          .get("/api/articles?sort_by=topic")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "topic",
+              descending: true,
+            });
+          });
+      });
+      test("404: Should respond with 404 error when sort_by does not exist", () => {
+        return request(app)
+          .get("/api/articles?sort_by=iDontExist")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Cannot sort by iDontExist");
+          });
+      });
+      test("400: Should respond with 400 error when query is invalid", () => {
+        return request(app)
+          .get("/api/articles?sort=created_at")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
+    });
+    describe("order=", () => {
+      test("200: asc : Should sort in ascending order", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes&order=asc")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "votes",
+              descending: false,
+            });
+          });
+      });
+      test("200: desc : Should sort in descending order", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes&order=desc")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles).toBeSorted({
+              key: "votes",
+              descending: true,
+            });
+          });
+      });
+      test("400: Should repsond with 400 error when order is anything other than asc or desc", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes&order=most")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid input");
+          });
+      });
+    });
+    describe("topic=", () => {
+      test("200: Should respong with array of articles for the given topic", () => {
+        return request(app)
+          .get("/api/articles?topic=cats")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles.length).toBe(1);
+            expect(response.body.articles[0]).toEqual({
+              title: "UNCOVERED: catspiracy to bring down democracy",
+              topic: "cats",
+              author: "rogersop",
+              body: "Bastet walks amongst us, and the cats are taking arms!",
+              created_at: "2020-08-03T13:14:00.000Z",
+              votes: 0,
+              article_id: 5,
+            });
+          });
+      });
+      test("200: Should return an empty array when topic exists, but there are no articles associated", () => {
+        return request(app)
+          .get("/api/articles?topic=paper")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.articles.length).toBe(0);
+            expect(response.body.articles).toEqual([]);
+          });
+      });
+      test("404: Should return 404 error when topic does not exists ", () => {
+        return request(app)
+          .get("/api/articles?topic=iDontExist")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Resource not found");
+          });
+      });
+    });
+  });
 });
