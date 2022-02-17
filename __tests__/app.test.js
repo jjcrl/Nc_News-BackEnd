@@ -241,10 +241,10 @@ describe("ENDPOINT TESTING", () => {
               title: "UNCOVERED: catspiracy to bring down democracy",
               topic: "cats",
               author: "rogersop",
-              body: "Bastet walks amongst us, and the cats are taking arms!",
               created_at: "2020-08-03T13:14:00.000Z",
               votes: 0,
               article_id: 5,
+              comment_count: expect.any(String),
             });
           });
       });
@@ -310,6 +310,49 @@ describe("ENDPOINT TESTING", () => {
         .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Invalid Input");
+        });
+    });
+  });
+
+  describe("/api/articles , comment count addition for array of articles", () => {
+    test("200: GET request for articles should now include a comment_count for the number of all associated comments", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          response.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
+
+  describe("/api/articles/:article_id/ , comment count addiotion for single article", () => {
+    test('200: GET request for articles should now include a comment_count for the number of all associated comments"', () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual({
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            comment_count: "11",
+          });
         });
     });
   });
