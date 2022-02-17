@@ -11,11 +11,41 @@ exports.fetchArticles = async (query) => {
 
   let { sort_by, order, topic } = query;
 
-  const [key] = Object.keys(query);
 
-  if (key && !validQueries.includes(key)) {
-    return Promise.reject({ status: 400, msg: `Invalid Input` });
-  }
+  //PR FEEDBACK -> cannot garuntee order 
+  //const [test] = Object.keys(query);
+  // if (test && !validQueries.includes(test)) {
+  //   return Promise.reject({ status: 400, msg: `Invalid Input` });
+  // }
+
+ 
+  //key should be checked for validity
+  //goood === {sort_by: created_at}
+  // bad === {sort: created_at}
+
+
+  //v0.3
+  const queryKeys = Object.keys(query);
+  queryKeys.forEach((query) => {
+    console.log(query)
+    if (!validQueries.includes(query)) {
+      console.log(query)
+      return Promise.reject({ status: 400, msg: "Invalid Input" });
+    }
+  });
+
+
+  //v0.1
+  //if(query.sort_by === undefined || query.topic === undefined || query.order === undefined){
+    //return Promise.reject({status:400,msg:'Invalid Input'})
+  
+
+  //v0.2
+  // validQueries.forEach((valid)=>{
+  //   if(!query[valid]){
+  //     console.log(query)
+  //   }
+  // })
 
   if (!sort_by) {
     sort_by = "created_at";

@@ -125,7 +125,7 @@ describe("ENDPOINT TESTING", () => {
   });
 
   describe("/api/articles?...", () => {
-    describe("sort_by=...", () => {
+    describe.only("sort_by=...", () => {
       test("200: date : Should sort by date of creation descending, this should be the defualt sorting.", () => {
         return request(app)
           .get("/api/articles?sort_by=created_at")
