@@ -9,14 +9,20 @@ exports.fetchTopics = async () => {
 exports.fetchArticles = async (query) => {
   const validQueries = ["sort_by", "order", "topic"];
 
-  let { sort_by, order, topic } = query;
+  let { sort_by } = query;
+  let { order } = query;
+  let { topic } = query;
 
-  const [key] = Object.keys(query);
+  //let { sort_by, order, topic } = query;
 
-  
-  if (key && !validQueries.includes(key)) {
-    return Promise.reject({ status: 400, msg: `Invalid Input` });
+  const queryKeys = Object.keys(query);
+  for (const query of queryKeys) {
+    if (!validQueries.includes(query)) {
+      return Promise.reject({ status: 400, msg: "Invalid Input" });
+    }
   }
+
+
 
   if (!sort_by) {
     sort_by = "created_at";
@@ -51,8 +57,20 @@ exports.fetchUsers = async () => {
 
 exports.fetchArticleById = async (article_id) => {
   const article = await db.query(
-    `SELECT * FROM articles WHERE article_id = $1`,
+    `SELECT * FROM articles WHERE article_id = $1;`,
     [article_id]
   );
   return article.rows;
+};
+
+exports.fetchCommentsById = async (article_id) => {
+  const comments = await db.query(
+    `SELECT comments.author, comments.body, comments.comment_id,comments.created_at, comments.votes
+    FROM comments 
+    INNER JOIN articles 
+    ON articles.article_id = comments.article_id
+    WHERE comments.article_id = $1 ;`,
+    [article_id]
+  );
+  return comments.rows;
 };

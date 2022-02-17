@@ -3,7 +3,9 @@ const {
   fetchArticles,
   fetchUsers,
   fetchArticleById,
+  fetchCommentsById,
 } = require("../models/models");
+const { checkExists } = require("../models/utils");
 
 exports.getAllTopics = (req, res, next) => {
   fetchTopics()
@@ -16,14 +18,6 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-
-  // let queries = Oject.keys(req.query)
-  // const validQuries = ['sort_by','order','topic']
-
-  // if(validQuries.includes(queries[0])){
-  //   console.log(queries[0])
-  // }
-
   fetchArticles(req.query)
     .then((articles) => {
       res.status(200).send({ articles });
@@ -55,6 +49,20 @@ exports.getArticleById = (req, res, next) => {
       } else {
         res.status(200).send({ article });
       }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsById = (req, res, next) => {
+  const { article_id } = req.params;
+  Promise.all([
+    fetchCommentsById(article_id),
+    checkExists("articles", "article_id", article_id),
+  ])
+    .then(([comments]) => {
+      res.status(200).send({ comments: comments });
     })
     .catch((err) => {
       next(err);
