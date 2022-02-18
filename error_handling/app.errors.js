@@ -15,8 +15,8 @@ exports.handlePsqlError = (err, req, res, next) => {
 };
 
 exports.handleBadUser = (err, req, res, next) => {
-  if (err.code === "23503" || err.constraint === "comments_author_fkey") {
-    res.status(404).send({ msg: "Please login or signup before commenting" });
+  if (err.code === "23503" && err.constraint === "comments_author_fkey") {
+    res.status(404).send({ msg: "Please login or signup" });
   }else next(err)
 };
 

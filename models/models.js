@@ -100,12 +100,10 @@ exports.fetchCommentsById = async (article_id) => {
 
 exports.insertComment = async (newComment, article_id) => {
   const { username, body } = newComment;
-  const currentTime = Date.now();
-  const date = convertTimestampToDate({ created_at: currentTime });
 
   const comment = await db.query(
-    `INSERT INTO comments (author,body,article_id,votes,created_at) VALUES ($1,$2,$3,$4,$5) RETURNING *;`,
-    [username, body, article_id, 0, date.currentTime]
+    `INSERT INTO comments (author,body,article_id) VALUES ($1,$2,$3) RETURNING *;`,
+    [username, body, article_id]
   );
-  return comment.rows;
+  return comment.rows[0];
 };

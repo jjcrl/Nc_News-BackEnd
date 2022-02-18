@@ -370,7 +370,16 @@ describe("ENDPOINT TESTING", () => {
         .send(newComment)
         .expect(201)
         .then((response) => {
-          expect(response.body.comment).toBe("Relatable content!");
+          expect(response.body.comment).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              author: "butter_bridge",
+              body: "Relatable content!",
+              comment_id: 19,
+              created_at: expect.any(String),
+              votes: 0,
+            })
+          );
         });
     });
     test("POST: 404 , Responds with a custom 404 error when user is not loged in or registed when trying to comment", () => {
@@ -381,7 +390,7 @@ describe("ENDPOINT TESTING", () => {
         .expect(404)
         .then((response) => {
           expect(response.body.msg).toBe(
-            "Please login or signup before commenting"
+            "Please login or signup"
           );
         });
     });
