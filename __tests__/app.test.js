@@ -179,6 +179,28 @@ describe("ENDPOINT TESTING", () => {
             );
           });
       });
+      test("404: Should return 404 error when article_id does not exist", () => {
+        const newVote = 1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/articles/1000")
+          .send(vote)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Page Not Found");
+          });
+      });
+      test('400: Should return 400 error when article_id is invalid', () => {
+        const newVote = 1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/articles/ten")
+          .send(vote)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
       test('400: Should return a 400 error when non numerical value is passed as a vote', () => {
         const newVote = 'one';
         const vote = { inc_votes: newVote };
