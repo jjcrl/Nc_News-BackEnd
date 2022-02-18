@@ -2,13 +2,18 @@ const express = require("express");
 const app = express();
 
 const {
-  getAllTopics,
   getAllArticles,
-  getAllUsers,
   getArticleById,
+} = require("./db/controllers/articles.controller");
+
+const { getAllTopics } = require("./db/controllers/topics.controller");
+
+const { getAllUsers } = require("./db/controllers/users.controller");
+
+const {
   getCommentsById,
   postComment,
-} = require("./controllers/controllers");
+} = require("./db/controllers/comments.controller");
 
 const {
   handle404,
