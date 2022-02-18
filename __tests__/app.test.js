@@ -361,7 +361,7 @@ describe("ENDPOINT TESTING", () => {
         .get("/api/articles/2")
         .expect(200)
         .then((response) => {
-          expect(response.body.article).toEqual({
+          expect(response.body.article).toEqual(expect.objectContaining({
             article_id:2,
             title: "Sony Vaio; or, The Laptop",
             topic: "mitch",
@@ -370,8 +370,8 @@ describe("ENDPOINT TESTING", () => {
             created_at: '2020-10-16T05:03:00.000Z',
             votes: 0,
             comment_count:'0'
-          },);
-        });
+          }))
+        })
     });
   });
 });
