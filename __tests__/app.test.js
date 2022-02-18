@@ -237,15 +237,16 @@ describe("ENDPOINT TESTING", () => {
           .expect(200)
           .then((response) => {
             expect(response.body.articles.length).toBe(1);
-            expect(response.body.articles[0]).toEqual({
-              title: "UNCOVERED: catspiracy to bring down democracy",
-              topic: "cats",
-              author: "rogersop",
-              body: "Bastet walks amongst us, and the cats are taking arms!",
-              created_at: "2020-08-03T13:14:00.000Z",
-              votes: 0,
-              article_id: 5,
-            });
+            expect(response.body.articles[0]).toEqual(
+              expect.objectContaining({
+                title: "UNCOVERED: catspiracy to bring down democracy",
+                topic: "cats",
+                author: "rogersop",
+                created_at: "2020-08-03T13:14:00.000Z",
+                votes: 0,
+                article_id: 5,
+              })
+            );
           });
       });
       test("200: Should return an empty array when topic exists, but there are no articles associated", () => {
@@ -311,6 +312,66 @@ describe("ENDPOINT TESTING", () => {
         .then((response) => {
           expect(response.body.msg).toBe("Invalid Input");
         });
+    });
+  });
+
+  describe("/api/articles , comment count addition for array of articles", () => {
+    test("200: GET request for articles should now include a comment_count for the number of all associated comments", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          response.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
+
+  describe("/api/articles/:article_id/ , comment count addiotion for single article", () => {
+    test('200: GET request for articles should now include a comment_count for the number of all associated comments"', () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual({
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            comment_count: "11",
+          });
+        });
+    });
+    test("200: should still include a comment count witjh a value of zero when an aricle has no comments", () => {
+      return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual(expect.objectContaining({
+            article_id:2,
+            title: "Sony Vaio; or, The Laptop",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+            created_at: '2020-10-16T05:03:00.000Z',
+            votes: 0,
+            comment_count:'0'
+          }))
+        })
     });
   });
 });
