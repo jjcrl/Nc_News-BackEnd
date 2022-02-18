@@ -135,6 +135,62 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
+
+    describe("PATCH", () => {
+      test("200: Should take an vote object and update the current articles votes returning the updated article object", () => {
+        const newVote = 1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/articles/1")
+          .send(vote)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 101,
+              })
+            );
+          });
+      });
+      test("200: Should be also be able to update the articles votes in a negative manor", () => {
+        const newVote = -1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/articles/1")
+          .send(vote)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 99,
+              })
+            );
+          });
+      });
+      test('400: Should return a 400 error when non numerical value is passed as a vote', () => {
+        const newVote = 'one';
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/articles/1")
+          .send(vote)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe('Invalid Input')
+          });
+      });
+    });
   });
 
   describe("/api/articles?...", () => {

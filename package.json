@@ -9,7 +9,7 @@
     "test": "jest",
     "prepare": "husky install",
     "dev": "nodemon listen.js",
-    "peep": "psql -f peep.sql > peep.txt"
+    "peep": "psql -f ./db/peep.sql > peep.txt"
   },
   "repository": {
     "type": "git",

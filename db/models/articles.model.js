@@ -72,3 +72,15 @@ exports.fetchArticleById = async (article_id) => {
   );
   return article.rows;
 };
+
+exports.patchArticleVote = async (article_id, vote) => {
+  const updatedArticle = await db.query(
+    `
+    UPDATE articles 
+    SET votes = votes + $1 
+    WHERE article_id = $2 
+    RETURNING *`,
+    [vote, article_id]
+  );
+  return updatedArticle.rows[0];
+};
