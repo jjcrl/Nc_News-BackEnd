@@ -9,12 +9,18 @@ exports.handleCustomError = (err, req, res, next) => {
 };
 
 exports.handlePsqlError = (err, req, res, next) => {
-  if (err.code === "22P02" || err.code === '42601') {
+  if (err.code === "22P02" || err.code === "42601") {
     res.status(400).send({ msg: "Invalid Input" });
   } else next(err);
 };
 
-exports.handle500 = (err,req,res,next)=>{
-  console.log(err)
-  res.status(500).send({msg:'Server Error'})
-}
+exports.handleBadUser = (err, req, res, next) => {
+  if (err.code === "23503" && err.constraint === "comments_author_fkey") {
+    res.status(404).send({ msg: "Please login or signup" });
+  }else next(err)
+};
+
+exports.handle500 = (err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ msg: "Server Error" });
+};
