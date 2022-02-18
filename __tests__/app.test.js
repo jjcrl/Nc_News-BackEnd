@@ -179,15 +179,15 @@ describe("ENDPOINT TESTING", () => {
             );
           });
       });
-      test('400: Should return a 400 error when non numerical value is passed as a vote', () => {
-        const newVote = 'one';
+      test("400: Should return a 400 error when non numerical value is passed as a vote", () => {
+        const newVote = "one";
         const vote = { inc_votes: newVote };
         return request(app)
           .patch("/api/articles/1")
           .send(vote)
           .expect(400)
           .then((response) => {
-            expect(response.body.msg).toBe('Invalid Input')
+            expect(response.body.msg).toBe("Invalid Input");
           });
       });
     });
@@ -479,6 +479,20 @@ describe("ENDPOINT TESTING", () => {
             })
           );
         });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+      test("204: Should delete the comment by given comment_id", () => {
+        return request(app).delete("/api/comments/1").expect(204);
+      });
+      test("400: Should respond with 400 error when passed invalid comment_id ", () => {
+        return request(app)
+          .delete("/api/comments/one")
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
     });
   });
 });
