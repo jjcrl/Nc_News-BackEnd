@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { convertTimestampToDate } = require("../db/helpers/utils");
 const { checkExists } = require("./utils");
 
 exports.fetchTopics = async () => {
@@ -95,4 +96,16 @@ exports.fetchCommentsById = async (article_id) => {
     [article_id]
   );
   return comments.rows;
+};
+
+exports.insertComment = async (newComment, article_id) => {
+  const { username, body } = newComment;
+  const currentTime = Date.now()
+  const date = convertTimestampToDate({created_at:currentTime})
+
+  const comment = await db.query(
+    `INSERT INTO comments (author,body,article_id,votes,created_at) VALUES ($1,$2,$3,$4,$5) RETURNING *;`,
+    [username, body, article_id, 0, date.currentTime]
+  );
+  return comment.rows;
 };

@@ -230,6 +230,7 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
+
     describe("topic=", () => {
       test("200: Should respong with array of articles for the given topic", () => {
         return request(app)
@@ -267,6 +268,7 @@ describe("ENDPOINT TESTING", () => {
       });
     });
   });
+
   describe("/api/articles/:article_id/comments", () => {
     test("200: Should respond with an array of comments for the given article_id", () => {
       return request(app)
@@ -337,7 +339,7 @@ describe("ENDPOINT TESTING", () => {
     });
   });
 
-  describe("/api/articles/:article_id/ , comment count addiotion for single article", () => {
+  describe("/api/articles/:article_id/ , comment count addition for single article", () => {
     test('200: GET request for articles should now include a comment_count for the number of all associated comments"', () => {
       return request(app)
         .get("/api/articles/1")
@@ -353,6 +355,34 @@ describe("ENDPOINT TESTING", () => {
             votes: 100,
             comment_count: "11",
           });
+        });
+    });
+  });
+
+  describe("/api/articles/:article_id/comments", () => {
+    test("POST: 201, Post a comment to specied article with, request being a username and a body, returning the posted comment", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "Relatable content!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then((response) => {
+          expect(response.body.comment).toBe("Relatable content!");
+        });
+    });
+    test("POST: 404 , Responds with a custom 404 error when user is not loged in or registed when trying to comment", () => {
+      const newComment = { username: "jjcrl", body: "Relatable content!" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe(
+            "Please login or signup before commenting"
+          );
         });
     });
   });

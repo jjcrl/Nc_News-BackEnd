@@ -4,6 +4,7 @@ const {
   fetchUsers,
   fetchArticleById,
   fetchCommentsById,
+  insertComment,
 } = require("../models/models");
 const { checkExists } = require("../models/utils");
 
@@ -63,6 +64,17 @@ exports.getCommentsById = (req, res, next) => {
   ])
     .then(([comments]) => {
       res.status(200).send({ comments: comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  insertComment(req.body, article_id)
+    .then(([comment]) => {
+      res.status(201).send({ comment:comment.body });
     })
     .catch((err) => {
       next(err);
