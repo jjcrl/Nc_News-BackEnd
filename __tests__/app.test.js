@@ -187,7 +187,7 @@ describe("ENDPOINT TESTING", () => {
           .send(vote)
           .expect(404)
           .then((response) => {
-            expect(response.body.msg).toBe("Page Not Found");
+            expect(response.body.msg).toBe("Resource Not Found");
           });
       });
       test('400: Should return 400 error when article_id is invalid', () => {
