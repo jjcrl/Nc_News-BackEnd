@@ -1,4 +1,5 @@
 const request = require("supertest");
+const { response } = require("../app");
 const app = require("../app");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
@@ -33,6 +34,21 @@ describe("ENDPOINT TESTING", () => {
           .expect(404)
           .then((response) => {
             expect(response.body.msg).toBe("Page Not Found");
+          });
+      });
+    });
+    describe("POST", () => {
+      test("201: Should take a topic object with a description and a slug. Returning the newly posted topic", () => {
+        const newTopic = { slug: "tech", description: "machine go beep boop" };
+        return request(app)
+          .post("/api/topics")
+          .send(newTopic)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.topic).toEqual({
+              slug: "tech",
+              description: "machine go beep boop",
+            });
           });
       });
     });
