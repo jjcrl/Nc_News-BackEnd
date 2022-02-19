@@ -94,6 +94,33 @@ describe("ENDPOINT TESTING", () => {
         });
       });
     });
+    describe("/api/users/:username", () => {
+      describe("GET", () => {
+        test("200: Should respond with an object containg the username , avatar_url and name", () => {
+          return request(app)
+            .get("/api/users/butter_bridge")
+            .expect(200)
+            .then((response) => {
+              expect(response.body.user).toEqual(
+                expect.objectContaining({
+                  username: "butter_bridge",
+                  name: "jonny",
+                  avatar_url:
+                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                })
+              );
+            });
+        });
+        test("404: Should respond with 404 error when given username does not exist", () => {
+          return request(app)
+            .get("/api/users/jjcrl")
+            .expect(404)
+            .then((response) => {
+              expect(response.body.msg).toBe("User jjcrl Not Found");
+            });
+        });
+      });
+    });
   });
 
   describe("/api/articles/:article_id", () => {
@@ -191,7 +218,7 @@ describe("ENDPOINT TESTING", () => {
             expect(response.body.msg).toBe("Resource Not Found");
           });
       });
-      test('400: Should return 400 error when article_id is invalid', () => {
+      test("400: Should return 400 error when article_id is invalid", () => {
         const newVote = 1;
         const vote = { inc_votes: newVote };
         return request(app)
@@ -202,8 +229,8 @@ describe("ENDPOINT TESTING", () => {
             expect(response.body.msg).toBe("Invalid Input");
           });
       });
-      test('400: Should return a 400 error when non numerical value is passed as a vote', () => {
-        const newVote = 'one';
+      test("400: Should return a 400 error when non numerical value is passed as a vote", () => {
+        const newVote = "one";
         const vote = { inc_votes: newVote };
         return request(app)
           .patch("/api/articles/1")

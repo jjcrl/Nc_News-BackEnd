@@ -9,7 +9,7 @@ const {
 
 const { getAllTopics } = require("./db/controllers/topics.controller");
 
-const { getAllUsers } = require("./db/controllers/users.controller");
+const { getAllUsers, getUserByUsername } = require("./db/controllers/users.controller");
 
 const {
   getCommentsById,
@@ -40,6 +40,8 @@ app.get("/api/articles/:article_id/comments", getCommentsById);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.get("/api/users", getAllUsers);
+
+app.get('/api/users/:username', getUserByUsername)
 
 app.delete('/api/comments/:comment_id',deleteCommentById)
 
