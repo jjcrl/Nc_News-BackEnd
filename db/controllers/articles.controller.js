@@ -38,8 +38,11 @@ exports.updateArticleVote = (req, res, next) => {
 
   patchArticleVote(articles_id, inc_votes)
     .then((article) => {
-      res.status(201).send({article})
+      if (!article) {
+        return Promise.reject({ status: 404, msg: "Resource Not Found" });
+      }
 
+      res.status(201).send({ article });
     })
     .catch((err) => {
       next(err);
