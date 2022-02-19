@@ -179,6 +179,7 @@ describe("ENDPOINT TESTING", () => {
             );
           });
       });
+
       test("404: Should return 404 error when article_id does not exist", () => {
         const newVote = 1;
         const vote = { inc_votes: newVote };
@@ -209,7 +210,7 @@ describe("ENDPOINT TESTING", () => {
           .send(vote)
           .expect(400)
           .then((response) => {
-            expect(response.body.msg).toBe('Invalid Input')
+            expect(response.body.msg).toBe("Invalid Input");
           });
       });
     });
@@ -501,6 +502,20 @@ describe("ENDPOINT TESTING", () => {
             })
           );
         });
+    });
+  });
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+      test("204: Should delete the comment by given comment_id", () => {
+        return request(app).delete("/api/comments/1").expect(204);
+      });
+      test("400: Should respond with 400 error when passed invalid comment_id ", () => {
+        return request(app)
+          .delete("/api/comments/one")
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
     });
   });
 });

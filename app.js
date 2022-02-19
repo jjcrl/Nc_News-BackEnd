@@ -14,6 +14,7 @@ const { getAllUsers } = require("./db/controllers/users.controller");
 const {
   getCommentsById,
   postComment,
+  deleteCommentById,
 } = require("./db/controllers/comments.controller");
 
 const {
@@ -39,6 +40,8 @@ app.get("/api/articles/:article_id/comments", getCommentsById);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.get("/api/users", getAllUsers);
+
+app.delete('/api/comments/:comment_id',deleteCommentById)
 
 app.all("*", handle404);
 
