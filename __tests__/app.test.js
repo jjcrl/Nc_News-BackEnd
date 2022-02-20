@@ -9,6 +9,16 @@ beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
 describe("ENDPOINT TESTING", () => {
+  describe("/api", () => {
+    test("200: Should respond with a JSON of all available endpoints for the API", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.endpoints);
+        });
+    });
+  });
   describe("/api/topics", () => {
     describe("GET", () => {
       test("200: Should respond with an array of topic objects, each with a slug and description property", () => {
@@ -269,7 +279,6 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
-
     describe("PATCH", () => {
       test("200: Should take an vote object and update the current articles votes returning the updated article object", () => {
         const newVote = 1;
@@ -350,7 +359,6 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
-
     describe("DELETE", () => {
       test("204: Should delete the article at the given article_id", () => {
         return request(app).delete("/api/articles/7").expect(204);
