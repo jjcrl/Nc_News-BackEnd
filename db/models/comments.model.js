@@ -23,8 +23,23 @@ exports.insertComment = async (newComment, article_id) => {
 };
 
 exports.removeComment = async (comment_id) => {
-  const deletedComment = await db.query(`
+  const deletedComment = await db.query(
+    `
   DELETE FROM comments
-  WHERE comment_id = $1;`,[comment_id]);
+  WHERE comment_id = $1;`,
+    [comment_id]
+  );
   return deletedComment.rows;
+};
+
+exports.patchCommentVote = async (inc_votes, comment_id) => {
+  const updatedComment = await db.query(
+    `
+  UPDATE comments 
+  SET votes = votes + $1 
+  WHERE comment_id = $2 
+  RETURNING *`,
+    [inc_votes, comment_id]
+  );
+  return updatedComment.rows[0];
 };

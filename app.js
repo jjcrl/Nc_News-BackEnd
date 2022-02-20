@@ -5,7 +5,7 @@ const {
   getAllArticles,
   getArticleById,
   updateArticleVote,
-  postArticle
+  postArticle,
 } = require("./db/controllers/articles.controller");
 
 const {
@@ -22,6 +22,7 @@ const {
   getCommentsById,
   postComment,
   deleteCommentById,
+  updateCommentVote,
 } = require("./db/controllers/comments.controller");
 
 const {
@@ -57,6 +58,8 @@ app.get("/api/users/:username", getUserByUsername);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
+app.patch("/api/comments/:comment_id", updateCommentVote);
+
 app.all("*", handle404);
 
 app.use(handleCustomError);
@@ -65,7 +68,7 @@ app.use(handlePsqlError);
 
 app.use(handleBadUser);
 
-app.use(handleBadArticle)
+app.use(handleBadArticle);
 
 app.use(handle500);
 

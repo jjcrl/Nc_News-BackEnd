@@ -650,5 +650,58 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
+    describe("PATCH", () => {
+      test("200: Should take a new vote object and update the given comment_id vote count, returning the updated comment", () => {
+        const newVote = 1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/comments/1")
+          .send(vote)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.comment).toEqual(
+              expect.objectContaining({
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                votes: 17,
+                author: "butter_bridge",
+                article_id: 9,
+                created_at: "2020-04-06T12:17:00.000Z",
+                comment_id: 1,
+              })
+            );
+          });
+      });
+      test("200: Should also be able to update the comment in a negative manor", () => {
+        const newVote = -1;
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/comments/1")
+          .send(vote)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.comment).toEqual(
+              expect.objectContaining({
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                votes: 15,
+                author: "butter_bridge",
+                article_id: 9,
+                created_at: "2020-04-06T12:17:00.000Z",
+                comment_id: 1,
+              })
+            );
+          });
+      });
+      test("400: Should return 400 error should the new vote be anything but numerical", () => {
+        const newVote = "one";
+        const vote = { inc_votes: newVote };
+        return request(app)
+          .patch("/api/comments/1")
+          .send(vote)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
+    });
   });
 });

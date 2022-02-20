@@ -51,13 +51,6 @@ exports.updateArticleVote = (req, res, next) => {
 };
 
 exports.postArticle = (req, res, next) => {
-  const { title } = req.body;
-  const { body } = req.body;
-
-
-  
-
-
   insertArticle(req.body)
     .then((article) => {
       res.status(201).send({ article });
