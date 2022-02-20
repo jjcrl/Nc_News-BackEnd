@@ -15,8 +15,16 @@ exports.handlePsqlError = (err, req, res, next) => {
 };
 
 exports.handleBadUser = (err, req, res, next) => {
-  if (err.code === "23503" && err.constraint === "comments_author_fkey") {
+  if (err.code === "23503" && err.constraint.includes("author_fkey")) {
     res.status(404).send({ msg: "Please login or signup" });
+  } else next(err);
+};
+
+exports.handleBadArticle = (err, req, res, next) => {
+  if (err.code === "23503" && err.constraint.includes("topic_fkey")) {
+    res.status(404).send({
+      msg: "Articles require exisiting topics, please check topic",
+    });
   }else next(err)
 };
 

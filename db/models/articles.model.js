@@ -84,3 +84,49 @@ exports.patchArticleVote = async (article_id, vote) => {
   );
   return updatedArticle.rows[0];
 };
+
+exports.insertArticle = async (article) => {
+  const { author } = article;
+  const { body } = article;
+  const { topic } = article;
+  const { title } = article;
+
+  if (body.length === 0 || body === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "A new article requires a body",
+    });
+  } else if (title.length === 0 || title === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "A new article requires a title",
+    });
+  }
+
+  const insert = await db.query(
+    `INSERT INTO articles (author,body,topic,title) VALUES ($1,$2,$3,$4) RETURNING article_id;`,
+    [author, body, topic, title]
+  );
+
+  const { article_id } = insert.rows[0];
+
+  const newArticle = await db.query(
+    `
+  SELECT 
+  articles.title,
+  articles.topic,
+  articles.created_at,
+  articles.votes,
+  articles.author,
+  articles.article_id,
+  articles.body,
+COUNT (comments.comment_id) AS comment_count 
+FROM articles 
+LEFT JOIN comments ON articles.article_id = comments.article_id 
+WHERE articles.article_id = $1
+GROUP BY articles.article_id;`,
+    [article_id]
+  );
+
+  return newArticle.rows[0];
+};

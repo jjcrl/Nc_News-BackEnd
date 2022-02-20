@@ -1,1 +1,6 @@
 You are now connected to database "nc_news_test" as user "josephcarroll".
+ title | topic |         created_at         | votes |    author     | article_id | body | comment_count 
+-------+-------+----------------------------+-------+---------------+------------+------+---------------
+ test  | paper | 2022-02-19 18:06:11.623026 |     0 | butter_bridge |         13 | test |             0
+(1 row)
+

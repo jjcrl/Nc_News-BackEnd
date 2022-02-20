@@ -2,6 +2,7 @@ const {
   fetchArticles,
   fetchArticleById,
   patchArticleVote,
+  insertArticle,
 } = require("../models/articles.model");
 
 exports.getAllArticles = (req, res, next) => {
@@ -42,6 +43,23 @@ exports.updateArticleVote = (req, res, next) => {
         return Promise.reject({ status: 404, msg: "Resource Not Found" });
       }
 
+      res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const { title } = req.body;
+  const { body } = req.body;
+
+
+  
+
+
+  insertArticle(req.body)
+    .then((article) => {
       res.status(201).send({ article });
     })
     .catch((err) => {

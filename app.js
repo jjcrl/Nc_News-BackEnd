@@ -5,6 +5,7 @@ const {
   getAllArticles,
   getArticleById,
   updateArticleVote,
+  postArticle
 } = require("./db/controllers/articles.controller");
 
 const {
@@ -29,6 +30,7 @@ const {
   handlePsqlError,
   handle500,
   handleBadUser,
+  handleBadArticle,
 } = require("./error_handling/app.errors");
 
 app.use(express.json());
@@ -38,6 +40,8 @@ app.get("/api/topics", getAllTopics);
 app.post("/api/topics", postTopic);
 
 app.get("/api/articles", getAllArticles);
+
+app.post("/api/articles", postArticle);
 
 app.get("/api/articles/:article_id", getArticleById);
 
@@ -60,6 +64,8 @@ app.use(handleCustomError);
 app.use(handlePsqlError);
 
 app.use(handleBadUser);
+
+app.use(handleBadArticle)
 
 app.use(handle500);
 
