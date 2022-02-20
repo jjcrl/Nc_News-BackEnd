@@ -9,7 +9,9 @@
     "test": "jest",
     "prepare": "husky install",
     "dev": "nodemon listen.js",
-    "peep": "psql -f ./db/peep.sql > peep.txt"
+    "peep": "psql -f ./db/peep.sql > peep.txt",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
@@ -38,7 +40,8 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "jest-extended/all","jest-sorted"
+      "jest-extended/all",
+      "jest-sorted"
     ]
   }
 }
