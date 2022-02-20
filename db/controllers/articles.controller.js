@@ -1,8 +1,11 @@
+const { RowDescriptionMessage } = require("pg-protocol/dist/messages");
+const { checkExists } = require("../../utils");
 const {
   fetchArticles,
   fetchArticleById,
   patchArticleVote,
   insertArticle,
+  removeArticle,
 } = require("../models/articles.model");
 
 exports.getAllArticles = (req, res, next) => {
@@ -42,7 +45,6 @@ exports.updateArticleVote = (req, res, next) => {
       if (!article) {
         return Promise.reject({ status: 404, msg: "Resource Not Found" });
       }
-
       res.status(201).send({ article });
     })
     .catch((err) => {
@@ -54,6 +56,21 @@ exports.postArticle = (req, res, next) => {
   insertArticle(req.body)
     .then((article) => {
       res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  Promise.all([
+    removeArticle(article_id),
+    checkExists("articles", "article_id", article_id),
+  ])
+    .then(([article]) => {
+      res.status(204).send(article);
     })
     .catch((err) => {
       next(err);

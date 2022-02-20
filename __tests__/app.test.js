@@ -54,6 +54,55 @@ describe("ENDPOINT TESTING", () => {
     });
   });
 
+  describe("/api/users", () => {
+    describe("GET", () => {
+      test("200: Should respond with an array of user objects each with the a username property", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then((response) => {
+            expect(Array.isArray(response.body.users)).toBe(true);
+            expect(response.body.users.length).toBe(4);
+            response.body.users.forEach((user) => {
+              expect(user).toEqual(
+                expect.objectContaining({
+                  username: expect.any(String),
+                })
+              );
+            });
+          });
+      });
+    });
+  });
+
+  describe("/api/users/:username", () => {
+    describe("GET", () => {
+      test("200: Should respond with an object containg the username , avatar_url and name", () => {
+        return request(app)
+          .get("/api/users/butter_bridge")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.user).toEqual(
+              expect.objectContaining({
+                username: "butter_bridge",
+                name: "jonny",
+                avatar_url:
+                  "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+              })
+            );
+          });
+      });
+      test("404: Should respond with 404 error when given username does not exist", () => {
+        return request(app)
+          .get("/api/users/jjcrl")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("User jjcrl Not Found");
+          });
+      });
+    });
+  });
+
   describe("/api/articles", () => {
     describe("GET", () => {
       test("200: Should respond with an array of article objects , each with the properties title,article_id,topic,created_at,votes and author  which is the username from the users table", () => {
@@ -181,54 +230,6 @@ describe("ENDPOINT TESTING", () => {
     });
   });
 
-  describe("/api/users", () => {
-    describe("GET", () => {
-      test("200: Should respond with an array of user objects each with the a username property", () => {
-        return request(app)
-          .get("/api/users")
-          .expect(200)
-          .then((response) => {
-            expect(Array.isArray(response.body.users)).toBe(true);
-            expect(response.body.users.length).toBe(4);
-            response.body.users.forEach((user) => {
-              expect(user).toEqual(
-                expect.objectContaining({
-                  username: expect.any(String),
-                })
-              );
-            });
-          });
-      });
-    });
-  });
-  describe("/api/users/:username", () => {
-    describe("GET", () => {
-      test("200: Should respond with an object containg the username , avatar_url and name", () => {
-        return request(app)
-          .get("/api/users/butter_bridge")
-          .expect(200)
-          .then((response) => {
-            expect(response.body.user).toEqual(
-              expect.objectContaining({
-                username: "butter_bridge",
-                name: "jonny",
-                avatar_url:
-                  "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-              })
-            );
-          });
-      });
-      test("404: Should respond with 404 error when given username does not exist", () => {
-        return request(app)
-          .get("/api/users/jjcrl")
-          .expect(404)
-          .then((response) => {
-            expect(response.body.msg).toBe("User jjcrl Not Found");
-          });
-      });
-    });
-  });
-
   describe("/api/articles/:article_id", () => {
     describe("GET", () => {
       test("200: Should reposnd with an article object that has author which is the username from the users table, title, article_id, body, topic, created_at, votes, properties.", () => {
@@ -287,7 +288,7 @@ describe("ENDPOINT TESTING", () => {
                 body: "I find this existence challenging",
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 101,
-                comment_count: "11"
+                comment_count: "11",
               })
             );
           });
@@ -309,7 +310,7 @@ describe("ENDPOINT TESTING", () => {
                 body: "I find this existence challenging",
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 99,
-                comment_count: "11"
+                comment_count: "11",
               })
             );
           });
@@ -348,6 +349,89 @@ describe("ENDPOINT TESTING", () => {
             expect(response.body.msg).toBe("Invalid Input");
           });
       });
+    });
+
+    describe("DELETE", () => {
+      test("204: Should delete the article at the given article_id", () => {
+        return request(app).delete("/api/articles/7").expect(204);
+      });
+
+      test("404: Should return 404 should given article_id not exist", () => {
+        return request(app)
+          .delete("/api/articles/100")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Resource Not Found");
+          });
+      });
+      test("400: Should return 400 error should gievn article_id be invalid", () => {
+        return request(app)
+          .delete("/api/articles/ten")
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("Invalid Input");
+          });
+      });
+    });
+  });
+
+  describe("comment count for -> /api/articles & /api/articles/:artile_id", () => {
+    test("200: Should include a comment_count for the number of all associated comments", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+          response.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+
+    test('200: GET request for articles should now include a comment_count for the number of all associated comments"', () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual({
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 100,
+            comment_count: "11",
+          });
+        });
+    });
+    test("200: should still include a comment count with a value of 0 when an aricle has no comments", () => {
+      return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then((response) => {
+          expect(response.body.article).toEqual(
+            expect.objectContaining({
+              article_id: 2,
+              title: "Sony Vaio; or, The Laptop",
+              topic: "mitch",
+              author: "icellusedkars",
+              body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+              created_at: "2020-10-16T05:03:00.000Z",
+              votes: 0,
+              comment_count: "0",
+            })
+          );
+        });
     });
   });
 
@@ -491,7 +575,7 @@ describe("ENDPOINT TESTING", () => {
           .get("/api/articles?topic=iDontExist")
           .expect(404)
           .then((response) => {
-            expect(response.body.msg).toBe("Page Not Found");
+            expect(response.body.msg).toBe("Resource Not Found");
           });
       });
     });
@@ -532,7 +616,7 @@ describe("ENDPOINT TESTING", () => {
           .get("/api/articles/100/comments")
           .expect(404)
           .then((response) => {
-            expect(response.body.msg).toBe("Page Not Found");
+            expect(response.body.msg).toBe("Resource Not Found");
           });
       });
       test("400: Should respond with 400 error when given article_id is invalid", () => {
@@ -580,65 +664,6 @@ describe("ENDPOINT TESTING", () => {
     });
   });
 
-  describe("comment count for -> /api/articles & /api/articles/:artile_id", () => {
-    test("200: Should include a comment_count for the number of all associated comments", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((response) => {
-          response.body.articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(String),
-              })
-            );
-          });
-        });
-    });
-
-    test('200: GET request for articles should now include a comment_count for the number of all associated comments"', () => {
-      return request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then((response) => {
-          expect(response.body.article).toEqual({
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            title: "Living in the shadow of a great man",
-            article_id: 1,
-            topic: "mitch",
-            created_at: "2020-07-09T20:11:00.000Z",
-            votes: 100,
-            comment_count: "11",
-          });
-        });
-    });
-    test("200: should still include a comment count with a value of 0 when an aricle has no comments", () => {
-      return request(app)
-        .get("/api/articles/2")
-        .expect(200)
-        .then((response) => {
-          expect(response.body.article).toEqual(
-            expect.objectContaining({
-              article_id: 2,
-              title: "Sony Vaio; or, The Laptop",
-              topic: "mitch",
-              author: "icellusedkars",
-              body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
-              created_at: "2020-10-16T05:03:00.000Z",
-              votes: 0,
-              comment_count: "0",
-            })
-          );
-        });
-    });
-  });
   describe("/api/comments/:comment_id", () => {
     describe("DELETE", () => {
       test("204: Should delete the comment by given comment_id", () => {

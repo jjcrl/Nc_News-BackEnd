@@ -6,6 +6,7 @@ const {
   getArticleById,
   updateArticleVote,
   postArticle,
+  deleteArticleById,
 } = require("./db/controllers/articles.controller");
 
 const {
@@ -47,6 +48,8 @@ app.post("/api/articles", postArticle);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.patch("/api/articles/:articles_id", updateArticleVote);
+
+app.delete("/api/articles/:article_id", deleteArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsById);
 

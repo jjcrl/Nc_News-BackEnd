@@ -46,20 +46,7 @@
 
 
 
-SELECT 
-   articles.title,
-   articles.topic,
-   articles.created_at,
-   articles.votes,
-   articles.author,
-   articles.article_id,
-   articles.body,
-COUNT (comments.comment_id) AS comment_count 
-FROM articles 
-LEFT JOIN comments ON articles.article_id = comments.article_id 
-WHERE articles.article_id = 13
-GROUP BY articles.article_id;
-
+SELECT * FROM articles;
 
 --comment_count
     -- COUNT(comments.comment_id) AS comment_count 

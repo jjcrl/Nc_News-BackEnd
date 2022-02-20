@@ -5,6 +5,6 @@ exports.checkExists = async (table, column, value) => {
   const queryString = format("SELECT * FROM %I wHERE %I = $1", table, column);
   const dbOutput = await db.query(queryString, [value]);
   if (dbOutput.rows.length === 0) {
-    return Promise.reject({ status: 404, msg: "Page Not Found" });
+    return Promise.reject({ status: 404, msg: "Resource Not Found" });
   }
 };
