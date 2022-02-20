@@ -287,6 +287,7 @@ describe("ENDPOINT TESTING", () => {
                 body: "I find this existence challenging",
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 101,
+                comment_count: "11"
               })
             );
           });
@@ -308,6 +309,7 @@ describe("ENDPOINT TESTING", () => {
                 body: "I find this existence challenging",
                 created_at: "2020-07-09T20:11:00.000Z",
                 votes: 99,
+                comment_count: "11"
               })
             );
           });

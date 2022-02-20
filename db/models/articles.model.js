@@ -74,13 +74,29 @@ exports.fetchArticleById = async (article_id) => {
 };
 
 exports.patchArticleVote = async (article_id, vote) => {
-  const updatedArticle = await db.query(
+  const updateArticle = await db.query(
     `
     UPDATE articles 
     SET votes = votes + $1 
-    WHERE article_id = $2 
-    RETURNING *`,
+    WHERE article_id = $2`,
     [vote, article_id]
+  );
+
+  const updatedArticle = await db.query(
+    `SELECT 
+  articles.title,
+  articles.topic,
+  articles.created_at,
+  articles.votes,
+  articles.author,
+  articles.article_id,
+  articles.body,
+  COUNT(comments.comment_id) AS comment_count 
+  FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id;`,
+    [article_id]
   );
   return updatedArticle.rows[0];
 };
