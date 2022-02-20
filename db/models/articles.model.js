@@ -146,3 +146,12 @@ GROUP BY articles.article_id;`,
 
   return newArticle.rows[0];
 };
+
+exports.removeArticle = async (article_id) => {
+  const deleted = await db.query(
+    `DELETE FROM articles WHERE article_id = $1 RETURNING *`,
+    [article_id]
+  );
+
+  return deleted.rows;
+};
