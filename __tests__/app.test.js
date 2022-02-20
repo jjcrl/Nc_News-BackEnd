@@ -89,52 +89,142 @@ describe("ENDPOINT TESTING", () => {
           });
       });
     });
-
-    describe("/api/users", () => {
-      describe("GET", () => {
-        test("200: Should respond with an array of user objects each with the a username property", () => {
-          return request(app)
-            .get("/api/users")
-            .expect(200)
-            .then((response) => {
-              expect(Array.isArray(response.body.users)).toBe(true);
-              expect(response.body.users.length).toBe(4);
-              response.body.users.forEach((user) => {
-                expect(user).toEqual(
-                  expect.objectContaining({
-                    username: expect.any(String),
-                  })
-                );
-              });
-            });
-        });
+    describe("POST", () => {
+      test("201: Should take a new article object containing author title body topic, reposing with the newly posted article", () => {
+        const newArticle = {
+          author: "butter_bridge",
+          title: "copy no fax",
+          body: "brrrr",
+          topic: "paper",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(201)
+          .then((response) => {
+            expect(response.body.article).toEqual(
+              expect.objectContaining({
+                author: "butter_bridge",
+                title: "copy no fax",
+                body: "brrrr",
+                topic: "paper",
+                article_id: 13,
+                votes: 0,
+                comment_count: "0",
+                created_at: expect.any(String),
+              })
+            );
+          });
+      });
+      test("404: Should resposnd with a 404 error when the author is not in the database", () => {
+        const newArticle = {
+          author: "jjcrl",
+          title: "fax no copy",
+          body: "brrrr",
+          topic: "paper",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("Please login or signup");
+          });
+      });
+      test("404: Should repsond with a 404 error should the new articles topic not exist", () => {
+        const newArticle = {
+          author: "butter_bridge",
+          title: "fax no copy",
+          body: "brrrr",
+          topic: "I dont exist",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe(
+              "Articles require exisiting topics, please check topic"
+            );
+          });
+      });
+      test("400: Should reposnd with a 400 error if the body is empty", () => {
+        const newArticle = {
+          author: "butter_bridge",
+          title: "copy no fax",
+          body: "",
+          topic: "paper",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("A new article requires a body");
+          });
+      });
+      test("400: Should return a 400 error if the title is empty", () => {
+        const newArticle = {
+          author: "butter_bridge",
+          title: "",
+          body: "brrrr",
+          topic: "paper",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(400)
+          .then((response) => {
+            expect(response.body.msg).toBe("A new article requires a title");
+          });
       });
     });
-    describe("/api/users/:username", () => {
-      describe("GET", () => {
-        test("200: Should respond with an object containg the username , avatar_url and name", () => {
-          return request(app)
-            .get("/api/users/butter_bridge")
-            .expect(200)
-            .then((response) => {
-              expect(response.body.user).toEqual(
+  });
+
+  describe("/api/users", () => {
+    describe("GET", () => {
+      test("200: Should respond with an array of user objects each with the a username property", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then((response) => {
+            expect(Array.isArray(response.body.users)).toBe(true);
+            expect(response.body.users.length).toBe(4);
+            response.body.users.forEach((user) => {
+              expect(user).toEqual(
                 expect.objectContaining({
-                  username: "butter_bridge",
-                  name: "jonny",
-                  avatar_url:
-                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                  username: expect.any(String),
                 })
               );
             });
-        });
-        test("404: Should respond with 404 error when given username does not exist", () => {
-          return request(app)
-            .get("/api/users/jjcrl")
-            .expect(404)
-            .then((response) => {
-              expect(response.body.msg).toBe("User jjcrl Not Found");
-            });
-        });
+          });
+      });
+    });
+  });
+  describe("/api/users/:username", () => {
+    describe("GET", () => {
+      test("200: Should respond with an object containg the username , avatar_url and name", () => {
+        return request(app)
+          .get("/api/users/butter_bridge")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.user).toEqual(
+              expect.objectContaining({
+                username: "butter_bridge",
+                name: "jonny",
+                avatar_url:
+                  "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+              })
+            );
+          });
+      });
+      test("404: Should respond with 404 error when given username does not exist", () => {
+        return request(app)
+          .get("/api/users/jjcrl")
+          .expect(404)
+          .then((response) => {
+            expect(response.body.msg).toBe("User jjcrl Not Found");
+          });
       });
     });
   });
