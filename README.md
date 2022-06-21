@@ -1,35 +1,28 @@
-# <b>Northcoders News API</b>
+# Nc News Back End.
 
-## <b>Intro</b>
 This project is a demonstration of a RESTful API written in JavaScript and using Express JS alongside PostgreSQL as a database.
+
 This API is used as the Back End of my Front End project: https://github.com/jjcrl/fe-nc-news
 
-## <b>Hosted API</b>
-https://j412cff-nc-news.herokuapp.com/api
+## Available Data Interactions 
 
-<br>
-## <b>Available Data Innteractions</b>
-### <b>POST</b>
-1. Publish a new article
-2. Comment on an article
-3. Create a new topic
-<br>
-### <b>GET</b>
-1.View all api end points
-2. All Artlices
-3. A Single article 
-4.All users
-5. Single user
-6. Comments for an article
-7. All topics
-<br>
-### <b>PATCH</b>
-1. Vote on an article
-2. Vote on a comment
-### <b>DELETE </b>
-1. Reomove your own comment 
-2. Remove your own article 
-<br>
+* GET All available endpoints
+* GET An article by its id
+* GET All articles , with the abilitly to filter by topic, and sort by various feilds and decide the order
+* GET All users 
+* GET A single user
+* GET All Topics 
+* GET Comments for a given article
+
+* POST Publish a new article
+* POST Comment on an article
+* POST Create a new topic
+
+* PATCH Vote on a comment 
+* PATCH Vote on an article 
+
+* DELETE Your own article
+* DELETE Your own comment
 
 ## <b>How to clone and set up this repository</b>
 
