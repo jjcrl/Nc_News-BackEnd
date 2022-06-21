@@ -2,7 +2,7 @@
 
 ## <b>Intro</b>
 
-One week project completed during the Northcoders 13 week bootcamp built with PostgreSQL, Node.js, Express.js and hosted with Heroku.
+This project is a demonstration of a RESTful API written in JavaScript and using Express JS alongside PostgreSQL as a database.
 
 This project is used as the Back End of my Front End project: https://github.com/jjcrl/fe-nc-news
 
@@ -11,102 +11,35 @@ https://j412cff-nc-news.herokuapp.com/api
 
 <br>
 
-## <b>Available Endpoints</b>
+## <b>Available Data Innteractions</b>
 
-### <b>POST Endpoints</b>
-
-> ### `POST /api/articles/:article_id/comments`
+### <b>POST</b>
 >
-> add a comment for a particular article_id (if id exists)
->
-> Example request body:  
-> `{ "username": "butter_bridge", "body": "Wow, this is a great article!" }`
->
-> Example response:  
-> `{ "comment": { "comment_id": 396, "body": "Legendary", "article_id": 2, "author": "cooljmessy", "votes": 0, "created_at": "2022-04-06T15:27:15.888Z" } }`
+1. Publish a new article
+2. Comment on an article
+3. Create a new topic
 
 <br>
 
-### <b>GET Endpoints</b>
-
-> ### `GET /api`
+### <b>GET</b>
 >
-> serves up json representation of all the available endpoints of the api
-
-<br>
-
-> ### `GET /api/users`
->
-> serves an array of all users
->
-> Example response:  
-> `{ "users": [ { "username": "butter_bridge" }, { "username": "icellusedkars" } ] }`
+1.View all api end points
+2. All Artlices
+3. A Single article 
+4.All users
+5. Single user
+6. Comments for an article
+7. All topics
 
 <br>
 
-> ### `GET /api/topics`
->
-> serves an array of all topics
->
-> Example response:  
-> `{ "topics": [ { "slug": "football", "description": "Footie!" } ] }`
+### <b>PATCH</b>
+1. Vote on an article
+2. Vote on a comment
 
-<br>
-
-> ### `GET /api/articles`
->
-> serves an array of all articles
->
-> > **Available queries:**  
-> > "topic" = can be set to any existing topic  
-> > "sort_by" = "created_at"(default), "votes", "comment_count"  
-> > "order_by" = "DESC"(default) or "ASC"
->
-> Example response:  
-> `{ "articles": [ { "article_id": 1, "title": "Living in the shadow of a great man", "topic": "mitch", "author": "butter_bridge", "body": "I find this existence challenging", "created_at": 1594329060000, "votes": 100, "comment_count": "1" }, { "article_id": 2, "title": "Sony Vaio; or, The Laptop", "topic": "mitch", "author": "icellusedkars", "body": "Comment Body", "created_at": 1602828180000, "votes": 0, "comment_count": "2" } ] }`
-
-<br>
-
-> ### `GET /api/article/:article_id`
->
-> serves a single article of given id (if id exists)
->
-> Example response:  
-> `{ "article": { "article_id": 1, "author": "Brynster", "title": "The Theft of Booky McBook Face", "topic": "Comedy Crime Drama", "body": "woopdy booky doo!", "created_at": 1527695953341, "votes": 420, "comment_count": "11" } }`
-
-<br>
-
-> ### `GET /api/article/:article_id/comments`
->
-> serves an array of comments for a particular article (if id exists)
->
-> Example response:  
-> `{ "comments": [ { "comment_id": 396, "body": "Legendary", "article_id": 2, "author": "cooljmessy", "votes": 0, "created_at": "2022-04-06T15:27:15.888Z" }, { "comment_id": 162, "body": "Et suscipit maxime sit sunt consequuntur consequatur fugiat molestias. Et quis enim vero.", "article_id": 2, "author": "grumpy19", "votes": 14, "created_at": "2020-10-03T19:22:00.000Z" } ] }`
-
-<br>
-
-### <b>PATCH Endpoints</b>
-
-> ### `PATCH /api/articles/:article_id`
->
-> amends an article's votes, then serves the updated article with amended vote count
->
-> Example request body:  
-> `{ inc_votes: -1 }`
->
-> Example response:  
-> `{ "article": { "article_id": 2, "title": "The Rise Of Thinking Machines: How IBM's Watson Takes On The World", "topic": "coding", "author": "jessjelly", "body": "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.", "created_at": "2020-05-14T01:02:00.000Z", "votes": 11 } }`
-
-<br>
-
-### <b>DELETE Endpoints</b>
-
-> ### `DELETE /api/comments/:comment_id`
->
-> deletes comment by id (if id exists)
->
-> Example response:  
-> `{}` - status 204
+### <b>DELETE </b>
+1. Reomove your own comment 
+2. Remove your own article 
 
 <br>
 
